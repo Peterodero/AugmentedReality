@@ -11,14 +11,10 @@
   "dependencies": {
     "canvas-confetti": "^1.9.4",
     "lucide-react": "^0.453.0",
-    "mind-ar": "^1.2.5",
     "next": "16.3.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "three": "0.152.0"
-  },
-  "optionalDependencies": {
-    "canvas": "^2.11.2"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.0.0",
