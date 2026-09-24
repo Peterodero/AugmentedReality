@@ -26,7 +26,7 @@ export default function LandingPage() {
         <div className="flex items-center gap-3">
           <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#00A651]/15 border border-[#00A651]/30 text-[#00A651] text-xs font-bold">
             <span className="w-2 h-2 rounded-full bg-[#00A651] animate-ping" />
-            AR Camera Ready
+            Camera Ready
           </div>
           <ThemeToggle />
         </div>
@@ -57,7 +57,7 @@ export default function LandingPage() {
           className="group relative inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-[#00A651] to-[#008741] text-white font-extrabold text-lg shadow-xl shadow-[#00A651]/30 hover:shadow-[#00A651]/60 hover:scale-[1.02] transition-all duration-300 border border-emerald-400/30 active:scale-95"
         >
           <Camera className="w-6 h-6 text-white group-hover:rotate-12 transition-transform duration-300" />
-          <span>Launch AR Scanner</span>
+          <span>Launch Scanner</span>
           <ArrowRight className="w-5 h-5 text-white/90 group-hover:translate-x-1 transition-transform" />
         </Link>
 
