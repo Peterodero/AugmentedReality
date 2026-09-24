@@ -63,20 +63,23 @@ export default function ScanClient() {
 
           // Select random game recommendation from loaded games pool
           setGamesPool(currentPool => {
-            const game = getRandomGame(currentPool);
-            setRecommendedGame(game);
+            if (currentPool && currentPool.length > 0) {
+              const game = getRandomGame(currentPool);
+              setRecommendedGame(game);
+              // Celebrate with high-energy Safaricom green confetti burst!
+              confetti({
+                particleCount: 80,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#00A651', '#FFD100', '#008741', '#FFFFFF'],
+              });
+            } else {
+              setRecommendedGame(null);
+            }
             return currentPool;
           });
 
           setScanCount(prev => prev + 1);
-
-          // Celebrate with high-energy Safaricom green confetti burst!
-          confetti({
-            particleCount: 80,
-            spread: 70,
-            origin: { y: 0.6 },
-            colors: ['#00A651', '#FFD100', '#008741', '#FFFFFF'],
-          });
         };
 
         anchor.onTargetLost = () => {
@@ -196,7 +199,7 @@ export default function ScanClient() {
       )}
 
       {/* Target Found Modal Card Overlay */}
-      {isTargetFound && recommendedGame && (
+      {isTargetFound && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-300">
           <div className="w-full max-w-md glass-modal rounded-3xl p-6 relative overflow-hidden border border-[#00A651]/50 shadow-2xl">
             {/* Decorative Top Glow Header */}
@@ -210,46 +213,77 @@ export default function ScanClient() {
               </span>
             </div>
 
-            {/* Game Recommendation Details */}
-            <div className="mb-6">
-              <h3 className="text-2xl font-black text-heading leading-tight mb-2">
-                {recommendedGame.title}
-              </h3>
+            {recommendedGame ? (
+              <>
+                {/* Game Recommendation Details */}
+                <div className="mb-6">
+                  <h3 className="text-2xl font-black text-heading leading-tight mb-2">
+                    {recommendedGame.title}
+                  </h3>
+                  <p className="text-sm text-body leading-relaxed font-medium">
+                    {recommendedGame.description}
+                  </p>
+                </div>
 
-              <p className="text-sm text-body leading-relaxed font-medium">
-                {recommendedGame.description}
-              </p>
-            </div>
+                {/* Action Buttons */}
+                <div className="flex flex-col gap-3">
+                  <a
+                    href={recommendedGame.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full py-4 rounded-2xl bg-gradient-to-r from-[#00A651] to-[#008741] text-white font-extrabold text-center text-base shadow-xl shadow-[#00A651]/30 hover:shadow-[#00A651]/60 hover:scale-[1.01] active:scale-95 transition-all flex items-center justify-center gap-2 border border-emerald-400/30"
+                  >
+                    <span>PLAY NOW</span>
+                    <ExternalLink className="w-5 h-5" />
+                  </a>
 
-            {/* Action Buttons */}
-            <div className="flex flex-col gap-3">
-              <a
-                href={recommendedGame.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full py-4 rounded-2xl bg-gradient-to-r from-[#00A651] to-[#008741] text-white font-extrabold text-center text-base shadow-xl shadow-[#00A651]/30 hover:shadow-[#00A651]/60 hover:scale-[1.01] active:scale-95 transition-all flex items-center justify-center gap-2 border border-emerald-400/30"
-              >
-                <span>PLAY NOW</span>
-                <ExternalLink className="w-5 h-5" />
-              </a>
+                  <div className="flex items-center gap-2">
+                    <Link
+                      href="/"
+                      className="flex-1 py-3 rounded-xl glass-panel text-xs font-bold text-heading hover:text-[#00A651] transition-colors flex items-center justify-center gap-2 active:scale-95"
+                    >
+                      <ArrowLeft className="w-3.5 h-3.5 text-[#00A651]" /> Back to Home
+                    </Link>
 
-              <div className="flex items-center gap-2">
-                <Link
-                  href="/"
-                  className="flex-1 py-3 rounded-xl glass-panel text-xs font-bold text-heading hover:text-[#00A651] transition-colors flex items-center justify-center gap-2 active:scale-95"
-                >
-                  <ArrowLeft className="w-3.5 h-3.5 text-[#00A651]" /> Back to Home
-                </Link>
+                    <button
+                      onClick={() => setIsTargetFound(false)}
+                      aria-label="Scan logo again"
+                      className="py-3 px-4 rounded-xl glass-panel text-xs font-bold text-heading hover:text-[#00A651] transition-colors active:scale-95"
+                    >
+                      Rescan Logo
+                    </button>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                {/* No Games Configured Message */}
+                <div className="mb-6 text-center py-4">
+                  <div className="text-4xl mb-3">🎮</div>
+                  <h3 className="text-xl font-black text-heading leading-tight mb-2">
+                    Logo Scanned!
+                  </h3>
+                  <p className="text-sm text-body leading-relaxed font-medium">
+                    No games have been configured yet. Ask the event admin to add game recommendations at the admin portal.
+                  </p>
+                </div>
 
-                <button
-                  onClick={() => setIsTargetFound(false)}
-                  aria-label="Scan logo again"
-                  className="py-3 px-4 rounded-xl glass-panel text-xs font-bold text-heading hover:text-[#00A651] transition-colors active:scale-95"
-                >
-                  Rescan Logo
-                </button>
-              </div>
-            </div>
+                <div className="flex items-center gap-2">
+                  <Link
+                    href="/"
+                    className="flex-1 py-3 rounded-xl glass-panel text-xs font-bold text-heading hover:text-[#00A651] transition-colors flex items-center justify-center gap-2 active:scale-95"
+                  >
+                    <ArrowLeft className="w-3.5 h-3.5 text-[#00A651]" /> Back to Home
+                  </Link>
+                  <button
+                    onClick={() => setIsTargetFound(false)}
+                    className="py-3 px-4 rounded-xl glass-panel text-xs font-bold text-heading hover:text-[#00A651] transition-colors active:scale-95"
+                  >
+                    Rescan
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}

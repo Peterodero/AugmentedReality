@@ -4,48 +4,18 @@ import path from 'path';
 
 const GAMES_FILE_PATH = path.join(process.cwd(), 'public', 'games.json');
 
-const INITIAL_GAMES = [
-  {
-    id: 'safaricom-runner',
-    title: 'Safaricom Safari Runner 3D',
-    description: 'Dodge obstacles, collect M-PESA coins, and race for the high score!',
-    category: 'Arcade / Action',
-    badge: 'Popular',
-    color: '#00A651',
-    url: 'https://safaricom-runner.vercel.app'
-  },
-  {
-    id: 'mpesa-spin-win',
-    title: 'M-PESA Wheel of Fortune',
-    description: 'Spin the lucky wheel for instant prizes and bonus points.',
-    category: 'Casual / Luck',
-    badge: 'Prize Game',
-    color: '#FFD100',
-    url: 'https://mpesa-spin-win.vercel.app'
-  },
-  {
-    id: 'safaricom-trivia-dash',
-    title: 'Safaricom 5G Trivia Master',
-    description: 'Test your tech knowledge in a fast-paced live quiz countdown!',
-    category: 'Trivia / Quiz',
-    badge: 'Brain Teaser',
-    color: '#008741',
-    url: 'https://safaricom-trivia.vercel.app'
-  }
-];
-
-// Helper to load games from file or write defaults
+// Helper to load games from file — returns empty array if file doesn't exist yet
 function readGamesFromFile() {
   try {
     if (!fs.existsSync(GAMES_FILE_PATH)) {
-      fs.writeFileSync(GAMES_FILE_PATH, JSON.stringify(INITIAL_GAMES, null, 2), 'utf-8');
-      return INITIAL_GAMES;
+      return [];
     }
     const raw = fs.readFileSync(GAMES_FILE_PATH, 'utf-8');
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
   } catch (err) {
     console.error('Error reading games.json:', err);
-    return INITIAL_GAMES;
+    return [];
   }
 }
 

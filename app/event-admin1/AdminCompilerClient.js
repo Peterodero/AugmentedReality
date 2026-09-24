@@ -522,7 +522,7 @@ export default function AdminCompilerClient() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-body mb-1">
+                <label className="block text-xs font-bold text-heading mb-1.5">
                   Game Title <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -531,23 +531,23 @@ export default function AdminCompilerClient() {
                   placeholder="e.g. Safaricom Penalty Shootout 3D"
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl text-xs focus:border-[#00A651] focus:outline-none transition-colors"
+                  className="w-full px-4 py-3 rounded-xl bg-white dark:bg-black/60 border-2 border-slate-300 dark:border-white/20 text-slate-900 dark:text-white text-xs font-semibold placeholder:text-slate-400 dark:placeholder:text-gray-500 focus:border-[#00A651] focus:outline-none transition-all shadow-sm"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-body mb-1">
+                <label className="block text-xs font-bold text-heading mb-1.5">
                   Game Web URL <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <Link2 className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                  <Link2 className="w-4 h-4 text-slate-400 absolute left-3 top-3.5" />
                   <input
                     type="url"
                     required
                     placeholder="https://safaricom-game.vercel.app"
                     value={newUrl}
                     onChange={(e) => setNewUrl(e.target.value)}
-                    className="w-full pl-9 pr-4 py-2.5 rounded-xl text-xs focus:border-[#00A651] focus:outline-none transition-colors"
+                    className="w-full pl-9 pr-4 py-3 rounded-xl bg-white dark:bg-black/60 border-2 border-slate-300 dark:border-white/20 text-slate-900 dark:text-white text-xs font-semibold placeholder:text-slate-400 dark:placeholder:text-gray-500 focus:border-[#00A651] focus:outline-none transition-all shadow-sm"
                   />
                 </div>
               </div>
@@ -555,35 +555,35 @@ export default function AdminCompilerClient() {
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-body mb-1">Category (Optional)</label>
+                <label className="block text-xs font-bold text-heading mb-1.5">Category (Optional)</label>
                 <input
                   type="text"
                   placeholder="e.g. Sports / Action"
                   value={newCategory}
                   onChange={(e) => setNewCategory(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl text-xs focus:border-[#00A651] focus:outline-none transition-colors"
+                  className="w-full px-4 py-3 rounded-xl bg-white dark:bg-black/60 border-2 border-slate-300 dark:border-white/20 text-slate-900 dark:text-white text-xs font-semibold placeholder:text-slate-400 dark:placeholder:text-gray-500 focus:border-[#00A651] focus:outline-none transition-all shadow-sm"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-body mb-1">Badge Tag (Optional)</label>
+                <label className="block text-xs font-bold text-heading mb-1.5">Badge Tag (Optional)</label>
                 <input
                   type="text"
                   placeholder="e.g. Hot Prize Game"
                   value={newBadge}
                   onChange={(e) => setNewBadge(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl text-xs focus:border-[#00A651] focus:outline-none transition-colors"
+                  className="w-full px-4 py-3 rounded-xl bg-white dark:bg-black/60 border-2 border-slate-300 dark:border-white/20 text-slate-900 dark:text-white text-xs font-semibold placeholder:text-slate-400 dark:placeholder:text-gray-500 focus:border-[#00A651] focus:outline-none transition-all shadow-sm"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-body mb-1">Short Description (Optional)</label>
+                <label className="block text-xs font-bold text-heading mb-1.5">Short Description (Optional)</label>
                 <input
                   type="text"
                   placeholder="e.g. Score penalties to win M-PESA cash!"
                   value={newDescription}
                   onChange={(e) => setNewDescription(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl text-xs focus:border-[#00A651] focus:outline-none transition-colors"
+                  className="w-full px-4 py-3 rounded-xl bg-white dark:bg-black/60 border-2 border-slate-300 dark:border-white/20 text-slate-900 dark:text-white text-xs font-semibold placeholder:text-slate-400 dark:placeholder:text-gray-500 focus:border-[#00A651] focus:outline-none transition-all shadow-sm"
                 />
               </div>
             </div>
