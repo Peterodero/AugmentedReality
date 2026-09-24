@@ -409,26 +409,6 @@ export default function AdminCompilerClient() {
       <div className="absolute top-[-10%] left-[-10%] w-[350px] h-[350px] bg-[#00A651] opacity-20 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[350px] h-[350px] bg-[#00A651] opacity-15 rounded-full blur-[120px] pointer-events-none" />
 
-      {/* FLOATING TOP TOAST NOTIFICATION FOR GAME ACTIONS */}
-      {gameSuccessMsg && (
-        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-full max-w-lg px-4 animate-in slide-in-from-top-6 duration-300">
-          <div className="bg-[#00A651] text-white p-4 rounded-2xl shadow-2xl shadow-[#00A651]/50 border-2 border-emerald-300 flex items-center justify-between gap-3 font-extrabold text-sm">
-            <div className="flex items-center gap-3 min-w-0">
-              <div className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
-                <CheckCircle2 className="w-5 h-5 text-white" />
-              </div>
-              <span className="truncate">{gameSuccessMsg}</span>
-            </div>
-            <button
-              onClick={() => setGameSuccessMsg('')}
-              className="text-white/80 hover:text-white text-xs px-2.5 py-1 rounded-lg bg-white/20 hover:bg-white/30 transition-colors shrink-0"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
-
       {/* Header */}
       <header className="max-w-4xl mx-auto w-full flex items-center justify-between py-4 border-b border-emerald-500/20 mb-8">
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#00A651]/15 border border-[#00A651]/30 text-[#00A651] text-xs font-extrabold">
