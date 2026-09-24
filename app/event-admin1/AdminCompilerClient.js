@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Compiler } from '@/lib/mindar-image.prod.js';
 import {
   Upload, CheckCircle2, AlertCircle, Sparkles, Sliders, Play, Zap, Gamepad2, Plus,
-  Trash2, ExternalLink, Link2, RefreshCw, Lock, Unlock, KeyRound, LogOut
+  Trash2, ExternalLink, Link2, RefreshCw, Lock, Unlock, KeyRound, LogOut, Eye, EyeOff, Target
 } from 'lucide-react';
 import ThemeToggle from '@/components/ThemeToggle';
 
@@ -15,6 +15,7 @@ export default function AdminCompilerClient() {
   // Authentication State
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [pinInput, setPinInput] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [authError, setAuthError] = useState('');
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
@@ -28,6 +29,14 @@ export default function AdminCompilerClient() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const fileInputRef = useRef(null);
+
+  // Target Logo Management State
+  const [targetLogos, setTargetLogos] = useState([]);
+  const [isLoadingTargets, setIsLoadingTargets] = useState(true);
+  const [targetToDelete, setTargetToDelete] = useState(null);
+  const [isDeletingTarget, setIsDeletingTarget] = useState(false);
+  const [targetSuccessMsg, setTargetSuccessMsg] = useState('');
+  const [targetErrorMsg, setTargetErrorMsg] = useState('');
 
   // Game Management State
   const [games, setGames] = useState([]);
@@ -51,6 +60,7 @@ export default function AdminCompilerClient() {
     if (authStatus === 'true') {
       setIsAuthenticated(true);
       fetchGames();
+      fetchTargets();
     }
     setIsCheckingAuth(false);
   }, []);
@@ -64,6 +74,7 @@ export default function AdminCompilerClient() {
       setIsAuthenticated(true);
       sessionStorage.setItem('safaricom_admin_authenticated', 'true');
       fetchGames();
+      fetchTargets();
     } else {
       setAuthError('Incorrect Password. Try again.');
       setPinInput('');
@@ -76,6 +87,46 @@ export default function AdminCompilerClient() {
     sessionStorage.removeItem('safaricom_admin_authenticated');
     setPinInput('');
     setAuthError('');
+  };
+
+  const fetchTargets = async () => {
+    setIsLoadingTargets(true);
+    try {
+      const res = await fetch('/api/upload-target');
+      const data = await res.json();
+      if (data.targets) {
+        setTargetLogos(data.targets);
+      }
+    } catch (err) {
+      console.error('Error fetching targets:', err);
+    } finally {
+      setIsLoadingTargets(false);
+    }
+  };
+
+  const handleDeleteTarget = async (target) => {
+    if (!target) return;
+    setIsDeletingTarget(true);
+    setTargetErrorMsg('');
+    try {
+      const res = await fetch(`/api/upload-target?id=${target.id}`, {
+        method: 'DELETE',
+      });
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'Failed to delete target logo.');
+      }
+
+      setTargetLogos(data.targets || []);
+      setTargetSuccessMsg(`Deleted target logo "${target.name || 'Target'}".`);
+      setTimeout(() => setTargetSuccessMsg(''), 4000);
+    } catch (err) {
+      setTargetErrorMsg(err.message || 'Failed to delete target logo.');
+    } finally {
+      setIsDeletingTarget(false);
+      setTargetToDelete(null);
+    }
   };
 
   const fetchGames = async () => {
@@ -168,6 +219,10 @@ export default function AdminCompilerClient() {
       const blob = new Blob([bufferData], { type: 'application/octet-stream' });
       const formData = new FormData();
       formData.append('file', blob, 'targets.mind');
+      formData.append('fileName', selectedFile ? selectedFile.name : 'Safaricom_Target_Logo.png');
+      if (imagePreview) {
+        formData.append('previewImage', imagePreview);
+      }
 
       const res = await fetch('/api/upload-target', {
         method: 'POST',
@@ -182,6 +237,11 @@ export default function AdminCompilerClient() {
 
       setIsSuccess(true);
       setStatusMessage('Target Logo Activated! Ready for AR Scanning.');
+      if (data.targets) {
+        setTargetLogos(data.targets);
+      } else {
+        fetchTargets();
+      }
     } catch (err) {
       console.error('API Save Error:', err);
       setErrorMessage(err.message || 'Failed to upload target to server.');
@@ -298,15 +358,29 @@ export default function AdminCompilerClient() {
               <label className="block text-xs font-extrabold text-heading mb-2">
                 Password
               </label>
-              <input
-                type="password"
-                required
-                maxLength={100}
-                placeholder="Enter Password"
-                value={pinInput}
-                onChange={(e) => setPinInput(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl bg-white dark:bg-black/50 border border-slate-300 dark:border-white/10 text-heading text-center font-mono text-lg tracking-wider focus:border-[#00A651] focus:outline-none transition-colors"
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  maxLength={100}
+                  placeholder="Enter Password"
+                  value={pinInput}
+                  onChange={(e) => setPinInput(e.target.value)}
+                  className="w-full pl-4 pr-12 py-3 rounded-xl bg-white dark:bg-black/50 border border-slate-300 dark:border-white/10 text-heading text-center font-mono text-lg tracking-wider focus:border-[#00A651] focus:outline-none transition-colors"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors focus:outline-none"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-5 h-5" />
+                  ) : (
+                    <Eye className="w-5 h-5" />
+                  )}
+                </button>
+              </div>
             </div>
 
             <button
@@ -477,6 +551,91 @@ export default function AdminCompilerClient() {
               </div>
             </div>
           )}
+
+          {/* Active Target Logos Management List */}
+          <div className="mt-8 border-t border-emerald-500/20 pt-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-bold text-heading flex items-center gap-2">
+                <Target className="w-5 h-5 text-[#00A651]" /> Manage Target Logos ({targetLogos.length})
+              </h2>
+              <button
+                onClick={fetchTargets}
+                className="text-xs text-sub hover:text-heading flex items-center gap-1 font-semibold transition-colors"
+                title="Refresh target list"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${isLoadingTargets ? 'animate-spin' : ''}`} /> Refresh
+              </button>
+            </div>
+
+            {targetSuccessMsg && (
+              <div className="p-3 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-[#00A651] text-xs font-semibold mb-4 flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 shrink-0" />
+                <span>{targetSuccessMsg}</span>
+              </div>
+            )}
+
+            {targetErrorMsg && (
+              <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-300 text-xs font-semibold mb-4 flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>{targetErrorMsg}</span>
+              </div>
+            )}
+
+            {isLoadingTargets ? (
+              <div className="py-8 text-center text-xs text-sub flex items-center justify-center gap-2">
+                <div className="w-4 h-4 border-2 border-[#00A651] border-t-transparent rounded-full animate-spin" />
+                <span>Loading active target logos...</span>
+              </div>
+            ) : targetLogos.length === 0 ? (
+              <div className="p-6 rounded-2xl border border-dashed border-slate-300 dark:border-white/10 text-center text-xs text-sub font-medium">
+                No target logos stored. Upload or compile a logo above to enable live AR scanning!
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {targetLogos.map((target) => (
+                  <div
+                    key={target.id}
+                    className="glass-panel p-4 rounded-2xl flex items-center justify-between gap-3 border border-emerald-500/20 relative group hover:border-[#00A651]/50 transition-all"
+                  >
+                    <div className="flex items-center gap-3 overflow-hidden">
+                      <div className="w-14 h-14 rounded-xl overflow-hidden bg-black/10 dark:bg-black/50 shrink-0 border border-emerald-500/20 flex items-center justify-center">
+                        {target.preview ? (
+                          <img src={target.preview} alt={target.name} className="w-full h-full object-contain p-1" />
+                        ) : (
+                          <Sliders className="w-6 h-6 text-[#00A651]" />
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="font-bold text-heading text-xs truncate max-w-[140px]" title={target.name}>
+                            {target.name}
+                          </span>
+                          {target.isActive && (
+                            <span className="px-2 py-0.5 rounded-full bg-[#00A651]/20 border border-[#00A651]/40 text-[#00A651] text-[10px] font-extrabold shrink-0">
+                              Active
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-[11px] text-body font-medium flex items-center gap-2">
+                          <span>{target.size}</span>
+                          <span>•</span>
+                          <span>{new Date(target.createdAt).toLocaleDateString()}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => setTargetToDelete(target)}
+                      className="p-2.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 border border-red-500/20 hover:border-red-500/40 transition-colors shrink-0"
+                      title="Delete target logo"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </section>
 
 
@@ -714,6 +873,54 @@ export default function AdminCompilerClient() {
               >
                 <Trash2 className="w-4 h-4" />
                 <span>Yes, Remove Game</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Confirmation Modal Dialog for Target Logo Deletion */}
+      {targetToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="w-full max-w-md glass-modal rounded-3xl p-6 border border-red-500/30 shadow-2xl relative overflow-hidden">
+            <div className="w-12 h-12 rounded-2xl bg-red-500/15 text-red-600 dark:text-red-400 border border-red-500/30 flex items-center justify-center mb-4">
+              <Trash2 className="w-6 h-6" />
+            </div>
+
+            <h3 className="text-xl font-extrabold text-heading mb-2">
+              Delete Target Logo?
+            </h3>
+
+            <p className="text-xs text-body leading-relaxed mb-6 font-medium">
+              Are you sure you want to delete <span className="text-heading font-extrabold">"{targetToDelete.name}"</span>?
+              {targetToDelete.isActive && ' This is currently the active logo target used by live AR scanners.'}
+            </p>
+
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setTargetToDelete(null)}
+                disabled={isDeletingTarget}
+                className="flex-1 py-3 rounded-xl glass-panel text-body font-semibold text-xs transition-colors"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={() => handleDeleteTarget(targetToDelete)}
+                disabled={isDeletingTarget}
+                className="flex-1 py-3 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs shadow-lg shadow-red-600/30 transition-colors flex items-center justify-center gap-2"
+              >
+                {isDeletingTarget ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <span>Deleting...</span>
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="w-4 h-4" />
+                    <span>Yes, Delete Logo</span>
+                  </>
+                )}
               </button>
             </div>
           </div>
