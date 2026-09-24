@@ -2,26 +2,39 @@ import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 
-const GAMES_FILE_PATH = path.join(process.cwd(), 'public', 'games.json');
+const PUBLIC_GAMES_PATH = path.join(process.cwd(), 'public', 'games.json');
+const TMP_GAMES_PATH = '/tmp/games.json';
 
-// Helper to load games from file — returns empty array if file doesn't exist yet
+// Helper to load games from file — checks /tmp first (Vercel runtime), then public/games.json
 function readGamesFromFile() {
   try {
-    if (!fs.existsSync(GAMES_FILE_PATH)) {
-      return [];
+    if (fs.existsSync(TMP_GAMES_PATH)) {
+      const raw = fs.readFileSync(TMP_GAMES_PATH, 'utf-8');
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) return parsed;
     }
-    const raw = fs.readFileSync(GAMES_FILE_PATH, 'utf-8');
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
+    if (fs.existsSync(PUBLIC_GAMES_PATH)) {
+      const raw = fs.readFileSync(PUBLIC_GAMES_PATH, 'utf-8');
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) return parsed;
+    }
   } catch (err) {
     console.error('Error reading games.json:', err);
-    return [];
   }
+  return [];
 }
 
-// Helper to write games array to file
+// Helper to write games array to file with /tmp fallback on EROFS
 function writeGamesToFile(games) {
-  fs.writeFileSync(GAMES_FILE_PATH, JSON.stringify(games, null, 2), 'utf-8');
+  try {
+    fs.writeFileSync(PUBLIC_GAMES_PATH, JSON.stringify(games, null, 2), 'utf-8');
+  } catch (err) {
+    if (err.code === 'EROFS' || err.message?.includes('read-only')) {
+      fs.writeFileSync(TMP_GAMES_PATH, JSON.stringify(games, null, 2), 'utf-8');
+    } else {
+      throw err;
+    }
+  }
 }
 
 // GET /api/games - returns list of games
