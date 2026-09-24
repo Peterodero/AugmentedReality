@@ -38,7 +38,7 @@ export default function ScanClient() {
         // Initialize MindARThree instance pointing to compiled logo target
         mindarThree = new MindARThree({
           container: containerRef.current,
-          imageTargetSrc: '/targets.mind',
+          imageTargetSrc: '/api/upload-target?raw=1',
           maxTrack: 1,
           uiScanning: 'no',
           uiLoading: 'no',
