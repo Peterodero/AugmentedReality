@@ -75,7 +75,7 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="glass-panel p-5 rounded-2xl">
+          {/* <div className="glass-panel p-5 rounded-2xl">
             <div className="w-10 h-10 rounded-xl bg-[#00A651]/15 text-[#00A651] flex items-center justify-center font-extrabold mb-3">
               2
             </div>
@@ -85,11 +85,11 @@ export default function LandingPage() {
             <p className="text-xs text-body leading-normal font-medium">
               MindAR extracts feature vectors in real-time and recommends an admin-curated event game.
             </p>
-          </div>
+          </div> */}
 
           <div className="glass-panel p-5 rounded-2xl">
             <div className="w-10 h-10 rounded-xl bg-[#00A651]/15 text-[#00A651] flex items-center justify-center font-extrabold mb-3">
-              3
+              2
             </div>
             <h3 className="font-extrabold text-heading mb-1 flex items-center gap-2">
               <Gamepad2 className="w-4 h-4 text-[#00A651]" /> Play & Win
