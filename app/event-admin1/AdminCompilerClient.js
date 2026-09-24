@@ -280,14 +280,14 @@ export default function AdminCompilerClient() {
       }
 
       setGames(data.games);
-      setGameSuccessMsg(`"${newTitle}" added to active recommendation games!`);
+      setGameSuccessMsg(`🎉 Game "${newTitle}" added to active recommendation games!`);
       setNewTitle('');
       setNewUrl('');
       setNewDescription('');
       setNewCategory('');
       setNewBadge('');
 
-      setTimeout(() => setGameSuccessMsg(''), 4000);
+      setTimeout(() => setGameSuccessMsg(''), 6000);
     } catch (err) {
       setGameErrorMsg(err.message || 'Failed to add game.');
     } finally {
@@ -408,6 +408,26 @@ export default function AdminCompilerClient() {
       {/* Background Ambient Glow */}
       <div className="absolute top-[-10%] left-[-10%] w-[350px] h-[350px] bg-[#00A651] opacity-20 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[350px] h-[350px] bg-[#00A651] opacity-15 rounded-full blur-[120px] pointer-events-none" />
+
+      {/* FLOATING TOP TOAST NOTIFICATION FOR GAME ACTIONS */}
+      {gameSuccessMsg && (
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-full max-w-lg px-4 animate-in slide-in-from-top-6 duration-300">
+          <div className="bg-[#00A651] text-white p-4 rounded-2xl shadow-2xl shadow-[#00A651]/50 border-2 border-emerald-300 flex items-center justify-between gap-3 font-extrabold text-sm">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
+                <CheckCircle2 className="w-5 h-5 text-white" />
+              </div>
+              <span className="truncate">{gameSuccessMsg}</span>
+            </div>
+            <button
+              onClick={() => setGameSuccessMsg('')}
+              className="text-white/80 hover:text-white text-xs px-2.5 py-1 rounded-lg bg-white/20 hover:bg-white/30 transition-colors shrink-0"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Header */}
       <header className="max-w-4xl mx-auto w-full flex items-center justify-between py-4 border-b border-emerald-500/20 mb-8">
@@ -661,15 +681,35 @@ export default function AdminCompilerClient() {
 
           {/* Alert Messages for Game Management */}
           {gameSuccessMsg && (
-            <div className="p-4 rounded-2xl bg-[#00A651]/15 border border-[#00A651]/40 text-[#008741] dark:text-white text-xs mb-6 flex items-center gap-3 animate-in fade-in font-semibold">
-              <CheckCircle2 className="w-5 h-5 text-[#00A651] shrink-0" />
-              <span>{gameSuccessMsg}</span>
+            <div className="p-4 rounded-2xl bg-gradient-to-r from-[#00A651] to-[#008741] text-white shadow-xl shadow-[#00A651]/40 border border-emerald-300/40 text-sm mb-6 flex items-center justify-between gap-3 animate-in zoom-in-95 duration-200 font-extrabold">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
+                  <CheckCircle2 className="w-5 h-5 text-white" />
+                </div>
+                <span>{gameSuccessMsg}</span>
+              </div>
+              <button
+                onClick={() => setGameSuccessMsg('')}
+                className="text-white/80 hover:text-white text-xs px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 transition-colors shrink-0"
+              >
+                Dismiss
+              </button>
             </div>
           )}
           {gameErrorMsg && (
-            <div className="p-4 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-700 dark:text-red-200 text-xs mb-6 flex items-center gap-3 animate-in fade-in font-semibold">
-              <AlertCircle className="w-5 h-5 text-red-500 shrink-0" />
-              <span>{gameErrorMsg}</span>
+            <div className="p-4 rounded-2xl bg-red-600 text-white shadow-xl shadow-red-600/30 border border-red-400/40 text-sm mb-6 flex items-center justify-between gap-3 animate-in zoom-in-95 duration-200 font-extrabold">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
+                  <AlertCircle className="w-5 h-5 text-white" />
+                </div>
+                <span>{gameErrorMsg}</span>
+              </div>
+              <button
+                onClick={() => setGameErrorMsg('')}
+                className="text-white/80 hover:text-white text-xs px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 transition-colors shrink-0"
+              >
+                Dismiss
+              </button>
             </div>
           )}
 
